@@ -112,8 +112,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Reference Include="ParserStandardLibrary">
-      <HintPath>..\Resources\ParserStandardLibrary.dll</HintPath>
+    <Reference Include="ParserNETFrameworkLibrary">
+      <HintPath>..\Resources\ParserNETFrameworkLibrary.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

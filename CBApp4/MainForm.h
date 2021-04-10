@@ -253,23 +253,22 @@ namespace CBApp4 {
 
 #pragma endregion
 	private:
-		System::Void button1_Click(System::Object^ sender, System::EventArgs^ e)
+		Void button1_Click(System::Object^ sender, System::EventArgs^ e)
 		{
 			this->splitContainer2->Panel1Collapsed = !this->splitContainer2->Panel1Collapsed;
 		}
-		System::Void button4_Click(System::Object^ sender, System::EventArgs^ e)
+		Void button4_Click(System::Object^ sender, System::EventArgs^ e)
 		{
 			this->Close();
 		}
-		System::Void MainForm::groups_DownloadStringCompleted(Object^ sender, DownloadStringCompletedEventArgs^ e)
+		Void MainForm::groups_DownloadStringCompleted(Object^ sender, DownloadStringCompletedEventArgs^ e)
 		{
 			this->groups = ParserApp::Services::Parser::ParsePage(e->Result, true);
-			this->button5->Text = "Получилось!";
 			MessageBox::Show("Данные загружены. НАКОНЕЦ-ТО!");
 		}
 		Void MainForm::teachers_DownloadStringCompleted(Object^ sender, DownloadStringCompletedEventArgs^ e)
 		{
-			//this->teachers = ParserApp::Services::Parser::ParsePage(e->Result, true);
+			this->teachers = ParserApp::Services::Parser::ParsePage(e->Result, true);
 			MessageBox::Show("Данные загружены. НАКОНЕЦ-ТО!");
 		}
 		Void button5_Click(Object^ sender, EventArgs^ e)
