@@ -1,6 +1,10 @@
-#include "pch.h"
+
 #include "MainForm.h"
 #include <Windows.h>
+
+using namespace System;
+using namespace System::Net;
+using namespace System::Threading::Tasks;
 
 using namespace CBApp4;
 

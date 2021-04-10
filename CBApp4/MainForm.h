@@ -3,28 +3,31 @@
 namespace CBApp4 {
 
 	using namespace System;
+	using namespace System::Net;
+	using namespace System::Threading::Tasks;
 	using namespace System::ComponentModel;
 	using namespace System::Collections;
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
 	using namespace System::Drawing;
-
-	using namespace System::Threading::Tasks;
-	using namespace CBApp4;
+	
+	using namespace ParserApp::Models;
+	using namespace ParserApp::Services;
 
 	/// <summary>
 	/// Сводка для MainForm 
 	/// </summary> 
-
 	public ref class MainForm : public System::Windows::Forms::Form
 	{
 	public:
+		String^ groupsAddress = gcnew String("http://mgke.minsk.edu.by/ru/main.aspx?guid=3791");
+		String^ teachersAddress = gcnew String("http://mgke.minsk.edu.by/ru/main.aspx?guid=3811");
+		ParserApp::Models::EntitiesList^ groups;
+		ParserApp::Models::EntitiesList^ teachers;
+
 		MainForm(void)
 		{
 			InitializeComponent();
-			//
-		//TODO: добавьте код конструктора
-		//
 		}
 
 	protected:
@@ -38,19 +41,17 @@ namespace CBApp4 {
 				delete components;
 			}
 		}
-	private: System::Windows::Forms::SplitContainer^ splitContainer1;
-	protected:
-	private: System::Windows::Forms::SplitContainer^ splitContainer2;
-	private: System::Windows::Forms::Button^ button1;
-	private: System::Windows::Forms::ComboBox^ comboBox1;
-	private: System::Windows::Forms::Button^ button5;
-	private: System::Windows::Forms::Panel^ panel1;
-	private: System::Windows::Forms::Button^ button4;
-	private: System::Windows::Forms::Button^ button3;
-	private: System::Windows::Forms::Button^ button2;
-	private: System::Windows::Forms::ListView^ listView1;
-
-
+	private:
+		System::Windows::Forms::SplitContainer^ splitContainer1;
+		System::Windows::Forms::SplitContainer^ splitContainer2;
+		System::Windows::Forms::Button^ button1;
+		System::Windows::Forms::ComboBox^ comboBox1;
+		System::Windows::Forms::Button^ button5;
+		System::Windows::Forms::Panel^ panel1;
+		System::Windows::Forms::Button^ button4;
+		System::Windows::Forms::Button^ button3;
+		System::Windows::Forms::Button^ button2;
+		System::Windows::Forms::ListView^ listView1;
 
 	private:
 		/// <summary>
@@ -119,6 +120,7 @@ namespace CBApp4 {
 			this->button5->TabIndex = 2;
 			this->button5->Text = L"Обновить";
 			this->button5->UseVisualStyleBackColor = true;
+			this->button5->Click += gcnew System::EventHandler(this, &MainForm::button5_Click);
 			// 
 			// comboBox1
 			// 
@@ -220,7 +222,7 @@ namespace CBApp4 {
 			this->listView1->HideSelection = false;
 			this->listView1->Location = System::Drawing::Point(63, 0);
 			this->listView1->Name = L"listView1";
-			this->listView1->Size = System::Drawing::Size(496, 590);
+			this->listView1->Size = System::Drawing::Size(494, 590);
 			this->listView1->TabIndex = 0;
 			this->listView1->UseCompatibleStateImageBehavior = false;
 			// 
@@ -248,15 +250,36 @@ namespace CBApp4 {
 			this->ResumeLayout(false);
 
 		}
-#pragma endregion
-	private: System::Void button1_Click(System::Object^ sender, System::EventArgs^ e)
-	{
-		this->splitContainer2->Panel1Collapsed = !this->splitContainer2->Panel1Collapsed;
-	}
 
-	private: System::Void button4_Click(System::Object^ sender, System::EventArgs^ e)
-	{
-		this->Close();
-	}
-	};
+#pragma endregion
+	private:
+		System::Void button1_Click(System::Object^ sender, System::EventArgs^ e)
+		{
+			this->splitContainer2->Panel1Collapsed = !this->splitContainer2->Panel1Collapsed;
+		}
+		System::Void button4_Click(System::Object^ sender, System::EventArgs^ e)
+		{
+			this->Close();
+		}
+		System::Void MainForm::groups_DownloadStringCompleted(Object^ sender, DownloadStringCompletedEventArgs^ e)
+		{
+			this->groups = ParserApp::Services::Parser::ParsePage(e->Result, true);
+			this->button5->Text = "Получилось!";
+			MessageBox::Show("Данные загружены. НАКОНЕЦ-ТО!");
+		}
+		Void MainForm::teachers_DownloadStringCompleted(Object^ sender, DownloadStringCompletedEventArgs^ e)
+		{
+			//this->teachers = ParserApp::Services::Parser::ParsePage(e->Result, true);
+			MessageBox::Show("Данные загружены. НАКОНЕЦ-ТО!");
+		}
+		Void button5_Click(Object^ sender, EventArgs^ e)
+		{
+			WebClient^ client1 = gcnew WebClient;
+			WebClient^ client2 = gcnew WebClient;
+			client1->DownloadStringCompleted += gcnew DownloadStringCompletedEventHandler(this, &MainForm::groups_DownloadStringCompleted);
+			client2->DownloadStringCompleted += gcnew DownloadStringCompletedEventHandler(this, &MainForm::teachers_DownloadStringCompleted);
+			client1->DownloadStringAsync(gcnew Uri(this->groupsAddress));
+			client2->DownloadStringAsync(gcnew Uri(this->teachersAddress));
+		}
+};
 }
