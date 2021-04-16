@@ -1,11 +1,33 @@
 #pragma once
+#include "MainForm.h"
 
 using namespace System;
-using namespace System::Collections::Generic;
+using namespace System::Net;
+using namespace System::Net::Http;
 using namespace System::Threading::Tasks;
-//using namespace CBApp3::Domain::Services;
-//using namespace Models;
+using namespace CBApp4;
 
+ref class DataController
+{
+private:
+    MainForm form;
+public:
+    DataController(MainForm form) {
+        this->form = form;
+    }
+
+    void StartLoading() {
+
+    }
+};
+
+
+
+
+
+/*
+using namespace CBApp3::Domain::Services;
+using namespace Models;
 namespace Models
 {
     ref class Day
@@ -213,8 +235,7 @@ namespace Models
         }
     };
 }
-//Services
-/*
+
 namespace Services
 {
     static ref class Parser
