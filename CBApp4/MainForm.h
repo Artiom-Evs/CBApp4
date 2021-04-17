@@ -16,11 +16,7 @@ namespace CBApp4 {
 	public ref class MainForm : public System::Windows::Forms::Form
 	{
 	public:
-		String^ groupsAddress = gcnew String("http://mgke.minsk.edu.by/ru/main.aspx?guid=3791");
-		String^ teachersAddress = gcnew String("http://mgke.minsk.edu.by/ru/main.aspx?guid=3811");
-		ParserApp::Models::EntitiesList^ groups;
-		ParserApp::Models::EntitiesList^ teachers;
-
+		
 		MainForm(void);
 
 	protected:
@@ -45,22 +41,11 @@ namespace CBApp4 {
 
 #pragma endregion
 	private:
-		Void button1_Click(System::Object^ sender, System::EventArgs^ e);
-		Void button4_Click(System::Object^ sender, System::EventArgs^ e);
-		Void MainForm::groups_DownloadStringCompleted(Object^ sender, DownloadStringCompletedEventArgs^ e);
-		Void MainForm::teachers_DownloadStringCompleted(Object^ sender, DownloadStringCompletedEventArgs^ e);
+		Void button1_Click(Object^ sender, EventArgs^ e);
+		Void button2_Click(Object^ sender, EventArgs^ e);
+		Void button3_Click(Object^ sender, EventArgs^ e);
+		Void button4_Click(Object^ sender, EventArgs^ e);
 		Void button5_Click(Object^ sender, EventArgs^ e);
-
-		void SetListBox(EntitiesList^ list) {
-			for (int i = 0; i < list->Entities->Count; i++) {
-				//String^ text = gcnew String(list->Entities[i]->Name, 0, 10, System::Text::Encoding::GetEncoding(1251));
-				//this->listView1->Items->Add(text);
-			}
-		}
-	private: System::Void button3_Click(System::Object^ sender, System::EventArgs^ e)
-	{
-		EntitiesList^ entities = this->groups;
-		this->Close();
-	}
+		
 	};
 }

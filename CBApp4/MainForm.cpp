@@ -84,7 +84,7 @@ void MainForm::InitializeComponent(void)
 	this->comboBox1->FormattingEnabled = true;
 	this->comboBox1->Location = System::Drawing::Point(153, 3);
 	this->comboBox1->Name = L"comboBox1";
-	this->comboBox1->Size = System::Drawing::Size(600, 32);
+	this->comboBox1->Size = System::Drawing::Size(600, 40);
 	this->comboBox1->TabIndex = 1;
 	// 
 	// button1
@@ -170,6 +170,7 @@ void MainForm::InitializeComponent(void)
 	this->button2->TabIndex = 1;
 	this->button2->Text = L"Расписание групп";
 	this->button2->UseVisualStyleBackColor = true;
+	this->button2->Click += gcnew System::EventHandler(this, &MainForm::button2_Click);
 	// 
 	// listView1
 	// 
@@ -178,13 +179,13 @@ void MainForm::InitializeComponent(void)
 	this->listView1->HideSelection = false;
 	this->listView1->Location = System::Drawing::Point(63, 0);
 	this->listView1->Name = L"listView1";
-	this->listView1->Size = System::Drawing::Size(492, 590);
+	this->listView1->Size = System::Drawing::Size(490, 590);
 	this->listView1->TabIndex = 0;
 	this->listView1->UseCompatibleStateImageBehavior = false;
 	// 
 	// MainForm
 	// 
-	this->AutoScaleDimensions = System::Drawing::SizeF(11, 24);
+	this->AutoScaleDimensions = System::Drawing::SizeF(16, 32);
 	this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 	this->ClientSize = System::Drawing::Size(952, 654);
 	this->Controls->Add(this->splitContainer1);
@@ -207,41 +208,25 @@ void MainForm::InitializeComponent(void)
 
 }
 
-Void MainForm::button1_Click(System::Object^ sender, System::EventArgs^ e)
+Void MainForm::button1_Click(Object^ sender, EventArgs^ e)
 {
 	this->splitContainer2->Panel1Collapsed = !this->splitContainer2->Panel1Collapsed;
 }
-void MainForm::button4_Click(System::Object^ sender, System::EventArgs^ e)
+Void MainForm::button2_Click(Object^ sender, EventArgs^ e)
 {
 	this->Close();
 }
-Void MainForm::MainForm::groups_DownloadStringCompleted(Object^ sender, DownloadStringCompletedEventArgs^ e)
+Void MainForm::button3_Click(Object^ sender, EventArgs^ e)
 {
-	this->groups = ParserApp::Services::Parser::ParsePage(e->Result, true);
-	MessageBox::Show("Данные загружены. НАКОНЕЦ-ТО!");
+	this->Close();
 }
-Void MainForm::MainForm::teachers_DownloadStringCompleted(Object^ sender, DownloadStringCompletedEventArgs^ e)
+void MainForm::button4_Click(Object^ sender, EventArgs^ e)
 {
-	this->teachers = ParserApp::Services::Parser::ParsePage(e->Result, true);
-	MessageBox::Show("Данные загружены. НАКОНЕЦ-ТО!");
+	this->Close();
 }
 Void MainForm::button5_Click(Object^ sender, EventArgs^ e)
 {
-	HttpClient^ client1 = gcnew HttpClient();
-	HttpClient^ client2 = gcnew HttpClient();
-	String^ groupsText = client1->GetStringAsync(this->groupsAddress)->Result;
-	String^ teachersText = client2->GetStringAsync(this->groupsAddress)->Result;
-	this->groups = ParserApp::Services::Parser::ParsePage(groupsText, true);
-	this->groups = ParserApp::Services::Parser::ParsePage(teachersText, true);
 	
-	/*
-	WebClient^ client1 = gcnew WebClient;
-	WebClient^ client2 = gcnew WebClient;
-	client1->DownloadStringCompleted += gcnew DownloadStringCompletedEventHandler(this, &MainForm::groups_DownloadStringCompleted);
-	client2->DownloadStringCompleted += gcnew DownloadStringCompletedEventHandler(this, &MainForm::teachers_DownloadStringCompleted);
-	client1->DownloadStringAsync(gcnew Uri(this->groupsAddress));
-	client2->DownloadStringAsync(gcnew Uri(this->teachersAddress));
-	*/
 }
 
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
