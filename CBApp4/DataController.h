@@ -1,5 +1,4 @@
 #pragma once
-#include "MainForm.h"
 
 using namespace System;
 using namespace System::Net;
@@ -7,64 +6,64 @@ using namespace System::Net::Http;
 using namespace System::Threading::Tasks;
 using namespace ParserApp::Models;
 using namespace ParserApp::Services;
-using namespace CBApp4;
 
-ref class DataController
+namespace CBApp4 
 {
-private:
-    String^ groupsAddress;
-    String^ teachersAddress;
-    EntitiesList^ _groups;
-    EntitiesList^ _teachers;
-    MainForm^ form;
+    ref class DataController
+    {
+    private:
+        String^ groupsAddress;
+        String^ teachersAddress;
+        EntitiesList^ _groups;
+        EntitiesList^ _teachers;
 
-public:
-    DataController(MainForm^ form) {
-        this->groupsAddress = gcnew String("http://mgke.minsk.edu.by/ru/main.aspx?guid=3791");
-        this->teachersAddress = gcnew String("http://mgke.minsk.edu.by/ru/main.aspx?guid=3811");
-        this->form = form;
-    }
-
-    property EntitiesList^ Groups {
-        EntitiesList^ get() {
-            return this->_groups;
+    public:
+        DataController() {
+            this->groupsAddress = gcnew String("http://mgke.minsk.edu.by/ru/main.aspx?guid=3791");
+            this->teachersAddress = gcnew String("http://mgke.minsk.edu.by/ru/main.aspx?guid=3811");
         }
-    }
-    property EntitiesList^ Teachers {
-        EntitiesList^ get() {
-            return this->_teachers;
+
+        property EntitiesList^ Groups {
+            EntitiesList^ get() {
+                return this->_groups;
+            }
         }
-    }
+        property EntitiesList^ Teachers {
+            EntitiesList^ get() {
+                return this->_teachers;
+            }
+        }
 
-    void StartLoading() {
-        HttpClient^ client1 = gcnew HttpClient();
-        HttpClient^ client2 = gcnew HttpClient();
-        String^ groupsText = client1->GetStringAsync(this->groupsAddress)->Result;
-        String^ teachersText = client2->GetStringAsync(this->groupsAddress)->Result;
-        this->_groups = ParserApp::Services::Parser::ParsePage(groupsText, true);
-        this->_groups = ParserApp::Services::Parser::ParsePage(teachersText, true);
-    }
+        void StartLoading() {
+            HttpClient^ client1 = gcnew HttpClient();
+            HttpClient^ client2 = gcnew HttpClient();
+            String^ groupsText = client1->GetStringAsync(this->groupsAddress)->Result;
+            String^ teachersText = client2->GetStringAsync(this->groupsAddress)->Result;
+            this->_groups = ParserApp::Services::Parser::ParsePage(groupsText, true);
+            this->_groups = ParserApp::Services::Parser::ParsePage(teachersText, true);
+        }
 
-    Void groups_DownloadStringCompleted(Object^ sender, DownloadStringCompletedEventArgs^ e)
-    {
-        this->_groups = ParserApp::Services::Parser::ParsePage(e->Result, true);
-        MessageBox::Show("Äàííûå çàãğóæåíû. ÍÀÊÎÍÅÖ-ÒÎ!");
-    }
-    Void teachers_DownloadStringCompleted(Object^ sender, DownloadStringCompletedEventArgs^ e)
-    {
-        this->_teachers = ParserApp::Services::Parser::ParsePage(e->Result, true);
-        MessageBox::Show("Äàííûå çàãğóæåíû. ÍÀÊÎÍÅÖ-ÒÎ!");
-    }
-    Void Old_StartLoading()
-    {
-        WebClient^ client1 = gcnew WebClient;
-        WebClient^ client2 = gcnew WebClient;
-        client1->DownloadStringCompleted += gcnew DownloadStringCompletedEventHandler(this, &groups_DownloadStringCompleted);
-        client2->DownloadStringCompleted += gcnew DownloadStringCompletedEventHandler(this, &teachers_DownloadStringCompleted);
-        client1->DownloadStringAsync(gcnew Uri(this->groupsAddress));
-        client2->DownloadStringAsync(gcnew Uri(this->teachersAddress));
-    }
-};
+        Void groups_DownloadStringCompleted(Object^ sender, DownloadStringCompletedEventArgs^ e)
+        {
+            this->_groups = ParserApp::Services::Parser::ParsePage(e->Result, true);
+        }
+        Void teachers_DownloadStringCompleted(Object^ sender, DownloadStringCompletedEventArgs^ e)
+        {
+            this->_teachers = ParserApp::Services::Parser::ParsePage(e->Result, true);
+        }
+        Void Old_StartLoading()
+        {
+            WebClient^ client1 = gcnew WebClient;
+            WebClient^ client2 = gcnew WebClient;
+            client1->DownloadStringCompleted += gcnew DownloadStringCompletedEventHandler(this, &DataController::groups_DownloadStringCompleted);
+            client2->DownloadStringCompleted += gcnew DownloadStringCompletedEventHandler(this, &DataController::teachers_DownloadStringCompleted);
+            client1->DownloadStringAsync(gcnew Uri(this->groupsAddress));
+            client2->DownloadStringAsync(gcnew Uri(this->teachersAddress));
+        }
+    };
+
+}
+
 
 
 

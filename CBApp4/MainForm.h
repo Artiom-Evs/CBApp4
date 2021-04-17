@@ -1,4 +1,5 @@
 #pragma once
+#include "DataController.h"
 
 namespace CBApp4 {
 
@@ -16,7 +17,7 @@ namespace CBApp4 {
 	public ref class MainForm : public System::Windows::Forms::Form
 	{
 	public:
-		
+		DataController^ data;
 		MainForm(void);
 
 	protected:

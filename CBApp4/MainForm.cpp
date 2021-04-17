@@ -1,6 +1,6 @@
-
-#include "MainForm.h"
 #include <Windows.h>
+#include "MainForm.h"
+#include "DataController.h"
 
 using namespace System;
 using namespace System::Net;
@@ -11,6 +11,7 @@ using namespace CBApp4;
 MainForm::MainForm(void)
 {
 	InitializeComponent();
+	this->data = gcnew DataController();
 }
 MainForm::~MainForm()
 {
