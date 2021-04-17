@@ -33,6 +33,10 @@ namespace CBApp4 {
 		System::Windows::Forms::Button^ button3;
 		System::Windows::Forms::Button^ button2;
 		System::Windows::Forms::ListView^ listView1;
+	private: System::Windows::Forms::Panel^ panel2;
+	private: System::Windows::Forms::ListBox^ listBox1;
+	private: System::Windows::Forms::Button^ button6;
+	private: System::Windows::Forms::Label^ label1;
 
 	private:
 		System::ComponentModel::Container^ components;

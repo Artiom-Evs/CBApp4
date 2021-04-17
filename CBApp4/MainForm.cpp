@@ -33,6 +33,10 @@ void MainForm::InitializeComponent(void)
 	this->button3 = (gcnew System::Windows::Forms::Button());
 	this->button2 = (gcnew System::Windows::Forms::Button());
 	this->listView1 = (gcnew System::Windows::Forms::ListView());
+	this->panel2 = (gcnew System::Windows::Forms::Panel());
+	this->button6 = (gcnew System::Windows::Forms::Button());
+	this->listBox1 = (gcnew System::Windows::Forms::ListBox());
+	this->label1 = (gcnew System::Windows::Forms::Label());
 	(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->splitContainer1))->BeginInit();
 	this->splitContainer1->Panel1->SuspendLayout();
 	this->splitContainer1->Panel2->SuspendLayout();
@@ -42,6 +46,7 @@ void MainForm::InitializeComponent(void)
 	this->splitContainer2->Panel2->SuspendLayout();
 	this->splitContainer2->SuspendLayout();
 	this->panel1->SuspendLayout();
+	this->panel2->SuspendLayout();
 	this->SuspendLayout();
 	// 
 	// splitContainer1
@@ -116,6 +121,7 @@ void MainForm::InitializeComponent(void)
 	// splitContainer2.Panel1
 	// 
 	this->splitContainer2->Panel1->Controls->Add(this->panel1);
+	this->splitContainer2->Panel1->Controls->Add(this->panel2);
 	// 
 	// splitContainer2.Panel2
 	// 
@@ -181,9 +187,52 @@ void MainForm::InitializeComponent(void)
 	this->listView1->HideSelection = false;
 	this->listView1->Location = System::Drawing::Point(63, 0);
 	this->listView1->Name = L"listView1";
-	this->listView1->Size = System::Drawing::Size(490, 590);
+	this->listView1->Size = System::Drawing::Size(488, 590);
 	this->listView1->TabIndex = 0;
 	this->listView1->UseCompatibleStateImageBehavior = false;
+	// 
+	// panel2
+	// 
+	this->panel2->Controls->Add(this->label1);
+	this->panel2->Controls->Add(this->listBox1);
+	this->panel2->Controls->Add(this->button6);
+	this->panel2->Dock = System::Windows::Forms::DockStyle::Fill;
+	this->panel2->Location = System::Drawing::Point(0, 0);
+	this->panel2->Name = L"panel2";
+	this->panel2->Size = System::Drawing::Size(300, 602);
+	this->panel2->TabIndex = 4;
+	// 
+	// button6
+	// 
+	this->button6->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left)
+		| System::Windows::Forms::AnchorStyles::Right));
+	this->button6->Location = System::Drawing::Point(3, 0);
+	this->button6->Name = L"button6";
+	this->button6->Size = System::Drawing::Size(293, 43);
+	this->button6->TabIndex = 0;
+	this->button6->Text = L"Назад";
+	this->button6->UseVisualStyleBackColor = true;
+	// 
+	// listBox1
+	// 
+	this->listBox1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom)
+		| System::Windows::Forms::AnchorStyles::Left)
+		| System::Windows::Forms::AnchorStyles::Right));
+	this->listBox1->FormattingEnabled = true;
+	this->listBox1->ItemHeight = 32;
+	this->listBox1->Location = System::Drawing::Point(12, 92);
+	this->listBox1->Name = L"listBox1";
+	this->listBox1->Size = System::Drawing::Size(284, 484);
+	this->listBox1->TabIndex = 1;
+	// 
+	// label1
+	// 
+	this->label1->AutoSize = true;
+	this->label1->Location = System::Drawing::Point(12, 54);
+	this->label1->Name = L"label1";
+	this->label1->Size = System::Drawing::Size(93, 32);
+	this->label1->TabIndex = 2;
+	this->label1->Text = L"label1";
 	// 
 	// MainForm
 	// 
@@ -206,6 +255,8 @@ void MainForm::InitializeComponent(void)
 	(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->splitContainer2))->EndInit();
 	this->splitContainer2->ResumeLayout(false);
 	this->panel1->ResumeLayout(false);
+	this->panel2->ResumeLayout(false);
+	this->panel2->PerformLayout();
 	this->ResumeLayout(false);
 
 }
@@ -227,12 +278,14 @@ void MainForm::button4_Click(Object^ sender, EventArgs^ e)
 	this->Close();
 }
 
-void MainForm::DataLoadedHandler() {
-	MessageBox::Show("Загрузка завершена!");
-}
 Void MainForm::button5_Click(Object^ sender, EventArgs^ e)
 {
 	this->data->StartLoading();
+}
+void MainForm::DataLoadedHandler() {
+	this->listBox1->Items->AddRange(this->data->Groups->Entities->ToArray());
+	
+	MessageBox::Show("Загрузка завершена!");
 }
 
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
