@@ -9,6 +9,8 @@ using namespace ParserApp::Services;
 
 namespace CBApp4 
 {
+    public delegate void DataLoadingEventHandler();
+
     ref class DataController
     {
     private:
@@ -16,11 +18,36 @@ namespace CBApp4
         String^ teachersAddress;
         EntitiesList^ _groups;
         EntitiesList^ _teachers;
+        HttpClient^ httpClient;
+
+        Task^ loading;
+
+        void Loading() {
+            Task<String^>^ taskGroupsLoading = this->httpClient->GetStringAsync(this->groupsAddress);
+            Task<String^>^ taskTeachersLoading = this->httpClient->GetStringAsync(this->groupsAddress);
+            this->_groups = Parser::ParsePage(taskGroupsLoading, true);
+            this->_groups = Parser::ParsePage(taskTeachersLoading, false);
+
+            this->OnDataLoaded();
+        }
+        Void groups_DownloadStringCompleted(Object^ sender, DownloadStringCompletedEventArgs^ e)
+        {
+            this->_groups = ParserApp::Services::Parser::ParsePage(e->Result, true);
+        }
+        Void teachers_DownloadStringCompleted(Object^ sender, DownloadStringCompletedEventArgs^ e)
+        {
+            this->_teachers = ParserApp::Services::Parser::ParsePage(e->Result, true);
+        }
+
+        void OnDataLoaded() {
+            this->DataLoadingCompleted();
+        }
 
     public:
         DataController() {
             this->groupsAddress = gcnew String("http://mgke.minsk.edu.by/ru/main.aspx?guid=3791");
             this->teachersAddress = gcnew String("http://mgke.minsk.edu.by/ru/main.aspx?guid=3811");
+            this->httpClient = gcnew HttpClient();
         }
 
         property EntitiesList^ Groups {
@@ -35,21 +62,7 @@ namespace CBApp4
         }
 
         void StartLoading() {
-            HttpClient^ client1 = gcnew HttpClient();
-            HttpClient^ client2 = gcnew HttpClient();
-            String^ groupsText = client1->GetStringAsync(this->groupsAddress)->Result;
-            String^ teachersText = client2->GetStringAsync(this->groupsAddress)->Result;
-            this->_groups = ParserApp::Services::Parser::ParsePage(groupsText, true);
-            this->_groups = ParserApp::Services::Parser::ParsePage(teachersText, true);
-        }
-
-        Void groups_DownloadStringCompleted(Object^ sender, DownloadStringCompletedEventArgs^ e)
-        {
-            this->_groups = ParserApp::Services::Parser::ParsePage(e->Result, true);
-        }
-        Void teachers_DownloadStringCompleted(Object^ sender, DownloadStringCompletedEventArgs^ e)
-        {
-            this->_teachers = ParserApp::Services::Parser::ParsePage(e->Result, true);
+            this->loading = Task::Run(gcnew Action(this, &DataController::Loading));
         }
         Void Old_StartLoading()
         {
@@ -60,6 +73,8 @@ namespace CBApp4
             client1->DownloadStringAsync(gcnew Uri(this->groupsAddress));
             client2->DownloadStringAsync(gcnew Uri(this->teachersAddress));
         }
+
+        event DataLoadingEventHandler^ DataLoadingCompleted;
     };
 
 }

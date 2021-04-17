@@ -12,6 +12,7 @@ MainForm::MainForm(void)
 {
 	InitializeComponent();
 	this->data = gcnew DataController();
+	this->data->DataLoadingCompleted += gcnew DataLoadingEventHandler(this, &MainForm::DataLoadedHandler);
 }
 MainForm::~MainForm()
 {
@@ -225,9 +226,13 @@ void MainForm::button4_Click(Object^ sender, EventArgs^ e)
 {
 	this->Close();
 }
+
+void MainForm::DataLoadedHandler() {
+	MessageBox::Show("Загрузка завершена!");
+}
 Void MainForm::button5_Click(Object^ sender, EventArgs^ e)
 {
-	
+	this->data->StartLoading();
 }
 
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
