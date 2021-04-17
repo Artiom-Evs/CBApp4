@@ -14,8 +14,8 @@ ref class DataController
 private:
     String^ groupsAddress;
     String^ teachersAddress;
-    EntitiesList^ groups;
-    EntitiesList^ teachers;
+    EntitiesList^ _groups;
+    EntitiesList^ _teachers;
     MainForm^ form;
 
 public:
@@ -25,23 +25,34 @@ public:
         this->form = form;
     }
 
+    property EntitiesList^ Groups {
+        EntitiesList^ get() {
+            return this->_groups;
+        }
+    }
+    property EntitiesList^ Teachers {
+        EntitiesList^ get() {
+            return this->_teachers;
+        }
+    }
+
     void StartLoading() {
         HttpClient^ client1 = gcnew HttpClient();
         HttpClient^ client2 = gcnew HttpClient();
         String^ groupsText = client1->GetStringAsync(this->groupsAddress)->Result;
         String^ teachersText = client2->GetStringAsync(this->groupsAddress)->Result;
-        this->groups = ParserApp::Services::Parser::ParsePage(groupsText, true);
-        this->groups = ParserApp::Services::Parser::ParsePage(teachersText, true);
+        this->_groups = ParserApp::Services::Parser::ParsePage(groupsText, true);
+        this->_groups = ParserApp::Services::Parser::ParsePage(teachersText, true);
     }
 
     Void groups_DownloadStringCompleted(Object^ sender, DownloadStringCompletedEventArgs^ e)
     {
-        this->groups = ParserApp::Services::Parser::ParsePage(e->Result, true);
+        this->_groups = ParserApp::Services::Parser::ParsePage(e->Result, true);
         MessageBox::Show("Данные загружены. НАКОНЕЦ-ТО!");
     }
     Void teachers_DownloadStringCompleted(Object^ sender, DownloadStringCompletedEventArgs^ e)
     {
-        this->teachers = ParserApp::Services::Parser::ParsePage(e->Result, true);
+        this->_teachers = ParserApp::Services::Parser::ParsePage(e->Result, true);
         MessageBox::Show("Данные загружены. НАКОНЕЦ-ТО!");
     }
     Void Old_StartLoading()
