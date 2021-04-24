@@ -7,7 +7,7 @@ using namespace System::Threading::Tasks;
 using namespace ParserApp::Models;
 using namespace ParserApp::Services;
 
-namespace CBApp4 
+namespace CBApp4
 {
     public delegate void DataLoadingEventHandler();
 
@@ -20,13 +20,13 @@ namespace CBApp4
         EntitiesList^ _teachers;
         HttpClient^ httpClient;
 
-        Task^ loading;
+        Task^ _loading;
 
-        void Loading() {
+        void LoadingData() {
             Task<String^>^ taskGroupsLoading = this->httpClient->GetStringAsync(this->groupsAddress);
-            Task<String^>^ taskTeachersLoading = this->httpClient->GetStringAsync(this->groupsAddress);
+            Task<String^>^ taskTeachersLoading = this->httpClient->GetStringAsync(this->teachersAddress);
             this->_groups = Parser::ParsePage(taskGroupsLoading, true);
-            this->_groups = Parser::ParsePage(taskTeachersLoading, false);
+            this->_teachers = Parser::ParsePage(taskTeachersLoading, false);
 
             this->OnDataLoaded();
         }
@@ -47,6 +47,8 @@ namespace CBApp4
         DataController() {
             this->groupsAddress = gcnew String("http://mgke.minsk.edu.by/ru/main.aspx?guid=3791");
             this->teachersAddress = gcnew String("http://mgke.minsk.edu.by/ru/main.aspx?guid=3811");
+
+            System::Net::ServicePointManager::DefaultConnectionLimit = 4;
             this->httpClient = gcnew HttpClient();
         }
 
@@ -60,9 +62,14 @@ namespace CBApp4
                 return this->_teachers;
             }
         }
+        property Task^ Loading {
+            Task^ get() {
+                return this->_loading;
+            }
+        }
 
         void StartLoading() {
-            this->loading = Task::Run(gcnew Action(this, &DataController::Loading));
+            this->_loading = Task::Run(gcnew Action(this, &DataController::LoadingData));
         }
         Void Old_StartLoading()
         {
@@ -101,7 +108,7 @@ namespace Models
             this->_date = "";
             this->_lessons = gcnew List<array<String^>^>();
         }
-        
+
         Day(String^ name)
         {
             this->_date = name;

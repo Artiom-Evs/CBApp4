@@ -51,7 +51,8 @@ namespace CBApp4 {
 		Void button3_Click(Object^ sender, EventArgs^ e);
 		Void button4_Click(Object^ sender, EventArgs^ e);
 		Void button5_Click(Object^ sender, EventArgs^ e);
-		
+		Void button6_Click(Object^ sender, EventArgs^ e);
+
 		void DataLoadedHandler();
 	};
 }
