@@ -5,14 +5,18 @@
 using namespace System;
 using namespace System::Net;
 using namespace System::Net::Http;
+using namespace System::Collections::Generic;
 using namespace System::Threading::Tasks;
 using namespace CBApp4;
+using namespace ParserApp::Models;
+using namespace ParserApp::Services;
 
 MainForm::MainForm(void)
 {
 	InitializeComponent();
 	this->data = gcnew DataController();
 	this->data->DataLoadingCompleted += gcnew DataLoadingEventHandler(this, &MainForm::DataLoadedHandler);
+	this->data->StartLoading();
 }
 MainForm::~MainForm()
 {
@@ -32,11 +36,11 @@ void MainForm::InitializeComponent(void)
 	this->button4 = (gcnew System::Windows::Forms::Button());
 	this->button3 = (gcnew System::Windows::Forms::Button());
 	this->button2 = (gcnew System::Windows::Forms::Button());
-	this->listView1 = (gcnew System::Windows::Forms::ListView());
 	this->panel2 = (gcnew System::Windows::Forms::Panel());
-	this->button6 = (gcnew System::Windows::Forms::Button());
-	this->listBox1 = (gcnew System::Windows::Forms::ListBox());
 	this->label1 = (gcnew System::Windows::Forms::Label());
+	this->listBox1 = (gcnew System::Windows::Forms::ListBox());
+	this->button6 = (gcnew System::Windows::Forms::Button());
+	this->listView1 = (gcnew System::Windows::Forms::ListView());
 	(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->splitContainer1))->BeginInit();
 	this->splitContainer1->Panel1->SuspendLayout();
 	this->splitContainer1->Panel2->SuspendLayout();
@@ -87,6 +91,7 @@ void MainForm::InitializeComponent(void)
 	// comboBox1
 	// 
 	this->comboBox1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Left | System::Windows::Forms::AnchorStyles::Right));
+	this->comboBox1->AutoCompleteSource = System::Windows::Forms::AutoCompleteSource::CustomSource;
 	this->comboBox1->DropDownStyle = System::Windows::Forms::ComboBoxStyle::DropDownList;
 	this->comboBox1->FormattingEnabled = true;
 	this->comboBox1->Location = System::Drawing::Point(153, 3);
@@ -180,17 +185,6 @@ void MainForm::InitializeComponent(void)
 	this->button2->UseVisualStyleBackColor = true;
 	this->button2->Click += gcnew System::EventHandler(this, &MainForm::button2_Click);
 	// 
-	// listView1
-	// 
-	this->listView1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left)
-		| System::Windows::Forms::AnchorStyles::Right));
-	this->listView1->HideSelection = false;
-	this->listView1->Location = System::Drawing::Point(63, 0);
-	this->listView1->Name = L"listView1";
-	this->listView1->Size = System::Drawing::Size(488, 590);
-	this->listView1->TabIndex = 0;
-	this->listView1->UseCompatibleStateImageBehavior = false;
-	// 
 	// panel2
 	// 
 	this->panel2->Controls->Add(this->label1);
@@ -202,16 +196,14 @@ void MainForm::InitializeComponent(void)
 	this->panel2->Size = System::Drawing::Size(300, 602);
 	this->panel2->TabIndex = 4;
 	// 
-	// button6
+	// label1
 	// 
-	this->button6->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left)
-		| System::Windows::Forms::AnchorStyles::Right));
-	this->button6->Location = System::Drawing::Point(3, 0);
-	this->button6->Name = L"button6";
-	this->button6->Size = System::Drawing::Size(293, 43);
-	this->button6->TabIndex = 0;
-	this->button6->Text = L"Назад";
-	this->button6->UseVisualStyleBackColor = true;
+	this->label1->AutoSize = true;
+	this->label1->Location = System::Drawing::Point(12, 54);
+	this->label1->Name = L"label1";
+	this->label1->Size = System::Drawing::Size(93, 32);
+	this->label1->TabIndex = 2;
+	this->label1->Text = L"label1";
 	// 
 	// listBox1
 	// 
@@ -225,14 +217,28 @@ void MainForm::InitializeComponent(void)
 	this->listBox1->Size = System::Drawing::Size(284, 484);
 	this->listBox1->TabIndex = 1;
 	// 
-	// label1
+	// button6
 	// 
-	this->label1->AutoSize = true;
-	this->label1->Location = System::Drawing::Point(12, 54);
-	this->label1->Name = L"label1";
-	this->label1->Size = System::Drawing::Size(93, 32);
-	this->label1->TabIndex = 2;
-	this->label1->Text = L"label1";
+	this->button6->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left)
+		| System::Windows::Forms::AnchorStyles::Right));
+	this->button6->Location = System::Drawing::Point(3, 0);
+	this->button6->Name = L"button6";
+	this->button6->Size = System::Drawing::Size(293, 43);
+	this->button6->TabIndex = 0;
+	this->button6->Text = L"Назад";
+	this->button6->UseVisualStyleBackColor = true;
+	this->button6->Click += gcnew System::EventHandler(this, &MainForm::button6_Click);
+	// 
+	// listView1
+	// 
+	this->listView1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left)
+		| System::Windows::Forms::AnchorStyles::Right));
+	this->listView1->HideSelection = false;
+	this->listView1->Location = System::Drawing::Point(63, 0);
+	this->listView1->Name = L"listView1";
+	this->listView1->Size = System::Drawing::Size(480, 590);
+	this->listView1->TabIndex = 0;
+	this->listView1->UseCompatibleStateImageBehavior = false;
 	// 
 	// MainForm
 	// 
@@ -267,23 +273,41 @@ Void MainForm::button1_Click(Object^ sender, EventArgs^ e)
 }
 Void MainForm::button2_Click(Object^ sender, EventArgs^ e)
 {
-	this->Close();
+	if (this->data->Loading->IsCompleted) {
+		this->listBox1->DataSource = this->data->Groups->Entities;
+		this->label1->Text = this->data->Groups->Name;
+		this->panel1->Visible = false;
+		this->panel2->Visible = true;
+	}
 }
 Void MainForm::button3_Click(Object^ sender, EventArgs^ e)
 {
-	this->Close();
+	if (this->data->Loading->IsCompleted) {
+		this->listBox1->DataSource = this->data->Teachers->Entities;
+		this->label1->Text = this->data->Teachers->Name;
+		this->panel1->Visible = false;
+		this->panel2->Visible = true;
+	}
 }
 void MainForm::button4_Click(Object^ sender, EventArgs^ e)
 {
 	this->Close();
 }
-
 Void MainForm::button5_Click(Object^ sender, EventArgs^ e)
 {
 	this->data->StartLoading();
 }
+Void MainForm::button6_Click(Object^ sender, EventArgs^ e) {
+	this->panel2->Visible = false;
+	this->panel1->Visible = true;
+}
+
 void MainForm::DataLoadedHandler() {
-	this->listBox1->Items->AddRange(this->data->Groups->Entities->ToArray());
+	List<Entity^>^ entities = gcnew List<Entity^>();
+	entities->AddRange(this->data->Groups->Entities);
+	entities->AddRange(this->data->Teachers->Entities);
+
+	//this->comboBox1->DataSource = entities;
 	
 	MessageBox::Show("Загрузка завершена!");
 }

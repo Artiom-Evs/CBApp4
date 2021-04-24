@@ -19,14 +19,14 @@ namespace CBApp4
         EntitiesList^ _groups;
         EntitiesList^ _teachers;
         HttpClient^ httpClient;
+        
+        Task^ _loading;
 
-        Task^ loading;
-
-        void Loading() {
+        void LoadingData() {
             Task<String^>^ taskGroupsLoading = this->httpClient->GetStringAsync(this->groupsAddress);
-            Task<String^>^ taskTeachersLoading = this->httpClient->GetStringAsync(this->groupsAddress);
+            Task<String^>^ taskTeachersLoading = this->httpClient->GetStringAsync(this->teachersAddress);
             this->_groups = Parser::ParsePage(taskGroupsLoading, true);
-            this->_groups = Parser::ParsePage(taskTeachersLoading, false);
+            this->_teachers = Parser::ParsePage(taskTeachersLoading, false);
 
             this->OnDataLoaded();
         }
@@ -42,14 +42,16 @@ namespace CBApp4
         void OnDataLoaded() {
             this->DataLoadingCompleted();
         }
-
+        
     public:
         DataController() {
             this->groupsAddress = gcnew String("http://mgke.minsk.edu.by/ru/main.aspx?guid=3791");
             this->teachersAddress = gcnew String("http://mgke.minsk.edu.by/ru/main.aspx?guid=3811");
+            
+            System::Net::ServicePointManager::DefaultConnectionLimit = 4;
             this->httpClient = gcnew HttpClient();
         }
-
+        
         property EntitiesList^ Groups {
             EntitiesList^ get() {
                 return this->_groups;
@@ -60,9 +62,14 @@ namespace CBApp4
                 return this->_teachers;
             }
         }
+        property Task^ Loading {
+            Task^ get() {
+                return this->_loading;
+            }
+        }
 
         void StartLoading() {
-            this->loading = Task::Run(gcnew Action(this, &DataController::Loading));
+            this->_loading = Task::Run(gcnew Action(this, &DataController::LoadingData));
         }
         Void Old_StartLoading()
         {
