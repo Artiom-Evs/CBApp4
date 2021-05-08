@@ -6,6 +6,7 @@ using namespace System;
 using namespace System::Net;
 using namespace System::Net::Http;
 using namespace System::Collections::Generic;
+using namespace System::Threading;
 using namespace System::Threading::Tasks;
 using namespace CBApp4;
 using namespace ParserApp::Models;
@@ -15,6 +16,7 @@ MainForm::MainForm(void)
 	InitializeComponent();
 	this->data = gcnew DataController();
 	this->data->DataLoadingCompleted += gcnew DataLoadingEventHandler(this, &MainForm::DataLoadedHandler);
+	this->HandleCreated += gcnew EventHandler(this, &MainForm::button5_Click);
 	this->data->StartLoading();
 }
 MainForm::~MainForm()
@@ -42,14 +44,12 @@ void MainForm::InitializeComponent(void)
 	this->label1 = (gcnew System::Windows::Forms::Label());
 	this->listBox1 = (gcnew System::Windows::Forms::ListBox());
 	this->button6 = (gcnew System::Windows::Forms::Button());
-	this->listView1 = (gcnew System::Windows::Forms::ListView());
 	(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->splitContainer1))->BeginInit();
 	this->splitContainer1->Panel1->SuspendLayout();
 	this->splitContainer1->Panel2->SuspendLayout();
 	this->splitContainer1->SuspendLayout();
 	(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->splitContainer2))->BeginInit();
 	this->splitContainer2->Panel1->SuspendLayout();
-	this->splitContainer2->Panel2->SuspendLayout();
 	this->splitContainer2->SuspendLayout();
 	this->tabControl1->SuspendLayout();
 	this->tabPage1->SuspendLayout();
@@ -130,10 +130,6 @@ void MainForm::InitializeComponent(void)
 	// splitContainer2.Panel1
 	// 
 	this->splitContainer2->Panel1->Controls->Add(this->tabControl1);
-	// 
-	// splitContainer2.Panel2
-	// 
-	this->splitContainer2->Panel2->Controls->Add(this->listView1);
 	this->splitContainer2->Size = System::Drawing::Size(952, 602);
 	this->splitContainer2->SplitterDistance = 300;
 	this->splitContainer2->SplitterWidth = 6;
@@ -173,7 +169,7 @@ void MainForm::InitializeComponent(void)
 	this->panel1->Controls->Add(this->button2);
 	this->panel1->Location = System::Drawing::Point(6, 6);
 	this->panel1->Name = L"panel1";
-	this->panel1->Size = System::Drawing::Size(280, 567);
+	this->panel1->Size = System::Drawing::Size(280, 591);
 	this->panel1->TabIndex = 4;
 	// 
 	// button4
@@ -254,6 +250,7 @@ void MainForm::InitializeComponent(void)
 	this->listBox1->Name = L"listBox1";
 	this->listBox1->Size = System::Drawing::Size(274, 452);
 	this->listBox1->TabIndex = 2;
+	this->listBox1->Click += gcnew System::EventHandler(this, &MainForm::listBox1_Click);
 	// 
 	// button6
 	// 
@@ -266,17 +263,6 @@ void MainForm::InitializeComponent(void)
 	this->button6->Text = L"Назад";
 	this->button6->UseVisualStyleBackColor = true;
 	this->button6->Click += gcnew System::EventHandler(this, &MainForm::button6_Click);
-	// 
-	// listView1
-	// 
-	this->listView1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left)
-		| System::Windows::Forms::AnchorStyles::Right));
-	this->listView1->HideSelection = false;
-	this->listView1->Location = System::Drawing::Point(63, 0);
-	this->listView1->Name = L"listView1";
-	this->listView1->Size = System::Drawing::Size(476, 590);
-	this->listView1->TabIndex = 0;
-	this->listView1->UseCompatibleStateImageBehavior = false;
 	// 
 	// MainForm
 	// 
@@ -295,7 +281,6 @@ void MainForm::InitializeComponent(void)
 	(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->splitContainer1))->EndInit();
 	this->splitContainer1->ResumeLayout(false);
 	this->splitContainer2->Panel1->ResumeLayout(false);
-	this->splitContainer2->Panel2->ResumeLayout(false);
 	(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->splitContainer2))->EndInit();
 	this->splitContainer2->ResumeLayout(false);
 	this->tabControl1->ResumeLayout(false);
@@ -339,6 +324,9 @@ Void MainForm::button5_Click(Object^ sender, EventArgs^ e)
 Void MainForm::button6_Click(Object^ sender, EventArgs^ e) {
 	this->tabControl1->SelectedIndex = 0;
 }
+Void MainForm::listBox1_Click(Object^ sender, EventArgs^ e) {
+	//this->webBrowser1->Url = gcnew Uri("http://mgke.minsk.edu.by/ru/main.aspx?guid=3791");
+}
 
 void MainForm::DataLoadedHandler() {
 	List<Entity^>^ entities = gcnew List<Entity^>();
@@ -351,7 +339,26 @@ void MainForm::DataLoadedHandler() {
 
 	MessageBox::Show("Загрузка завершена!");
 }
+void MainForm::CreateWebBrowser(Object^ sender, EventArgs^ e) {
+	webBrowserThread = gcnew Thread(gcnew ThreadStart(this, &MainForm::SelectWebBrowser));
+	this->Invoke(gcnew Action(this, &MainForm::AddWebBrowserInControls));
+	webBrowserThread->SetApartmentState(ApartmentState::STA);
+	webBrowserThread->Start();
+}
+void MainForm::SelectWebBrowser() {
+	this->webBrowser1 = (gcnew System::Windows::Forms::WebBrowser());
+	this->webBrowser1->Dock = System::Windows::Forms::DockStyle::Fill;
+	this->webBrowser1->Location = System::Drawing::Point(0, 0);
+	this->webBrowser1->MinimumSize = System::Drawing::Size(20, 20);
+	this->webBrowser1->Name = L"webBrowser1";
+	this->webBrowser1->Size = System::Drawing::Size(646, 602);
+	this->webBrowser1->TabIndex = 0;
+}
+void MainForm::AddWebBrowserInControls() {
+	this->splitContainer2->Panel2->Controls->Add(this->webBrowser1);
+}
 
+//[STAThread]
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
 	Application::EnableVisualStyles();

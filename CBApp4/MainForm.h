@@ -5,6 +5,7 @@ namespace CBApp4 {
 
 	using namespace System;
 	using namespace System::Net;
+	using namespace System::Threading;
 	using namespace System::Threading::Tasks;
 	using namespace System::ComponentModel;
 	using namespace System::Collections;
@@ -17,18 +18,20 @@ namespace CBApp4 {
 	public ref class MainForm : public System::Windows::Forms::Form
 	{
 	public:
-		DataController^ data;
 		MainForm(void);
 
 	protected:
 		~MainForm();
 	private:
+		DataController^ data;
+		Thread^ webBrowserThread;
+
 		System::Windows::Forms::SplitContainer^ splitContainer1;
 		System::Windows::Forms::SplitContainer^ splitContainer2;
 		System::Windows::Forms::Button^ button1;
 		System::Windows::Forms::ComboBox^ comboBox1;
 		System::Windows::Forms::Button^ button5;
-		System::Windows::Forms::ListView^ listView1;
+
 		System::Windows::Forms::TabControl^ tabControl1;
 		System::Windows::Forms::TabPage^ tabPage1;
 		System::Windows::Forms::Panel^ panel1;
@@ -40,6 +43,7 @@ namespace CBApp4 {
 		System::Windows::Forms::Label^ label1;
 		System::Windows::Forms::ListBox^ listBox1;
 		System::Windows::Forms::Button^ button6;
+	private: System::Windows::Forms::WebBrowser^ webBrowser1;
 
 	private:
 		System::ComponentModel::Container^ components;
@@ -55,7 +59,12 @@ namespace CBApp4 {
 		Void button4_Click(Object^ sender, EventArgs^ e);
 		Void button5_Click(Object^ sender, EventArgs^ e);
 		Void button6_Click(Object^ sender, EventArgs^ e);
+		Void listBox1_Click(Object^ sender, EventArgs^ e);
 
 		void DataLoadedHandler();
+		void CreateWebBrowser(Object^ sender, EventArgs^ e);
+		void SelectWebBrowser();
+		void AddWebBrowserInControls();
+		
 	};
 }
