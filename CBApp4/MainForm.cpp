@@ -16,7 +16,6 @@ MainForm::MainForm(void)
 	InitializeComponent();
 	this->data = gcnew DataController();
 	this->data->DataLoadingCompleted += gcnew DataLoadingEventHandler(this, &MainForm::DataLoadedHandler);
-	this->HandleCreated += gcnew EventHandler(this, &MainForm::button5_Click);
 	this->data->StartLoading();
 }
 MainForm::~MainForm()
@@ -44,12 +43,14 @@ void MainForm::InitializeComponent(void)
 	this->label1 = (gcnew System::Windows::Forms::Label());
 	this->listBox1 = (gcnew System::Windows::Forms::ListBox());
 	this->button6 = (gcnew System::Windows::Forms::Button());
+	this->webBrowser1 = (gcnew System::Windows::Forms::WebBrowser());
 	(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->splitContainer1))->BeginInit();
 	this->splitContainer1->Panel1->SuspendLayout();
 	this->splitContainer1->Panel2->SuspendLayout();
 	this->splitContainer1->SuspendLayout();
 	(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->splitContainer2))->BeginInit();
 	this->splitContainer2->Panel1->SuspendLayout();
+	this->splitContainer2->Panel2->SuspendLayout();
 	this->splitContainer2->SuspendLayout();
 	this->tabControl1->SuspendLayout();
 	this->tabPage1->SuspendLayout();
@@ -130,6 +131,10 @@ void MainForm::InitializeComponent(void)
 	// splitContainer2.Panel1
 	// 
 	this->splitContainer2->Panel1->Controls->Add(this->tabControl1);
+	// 
+	// splitContainer2.Panel2
+	// 
+	this->splitContainer2->Panel2->Controls->Add(this->webBrowser1);
 	this->splitContainer2->Size = System::Drawing::Size(952, 602);
 	this->splitContainer2->SplitterDistance = 300;
 	this->splitContainer2->SplitterWidth = 6;
@@ -250,7 +255,7 @@ void MainForm::InitializeComponent(void)
 	this->listBox1->Name = L"listBox1";
 	this->listBox1->Size = System::Drawing::Size(274, 452);
 	this->listBox1->TabIndex = 2;
-	this->listBox1->Click += gcnew System::EventHandler(this, &MainForm::listBox1_Click);
+	this->listBox1->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::listBox1_SelectedIndexChanged);
 	// 
 	// button6
 	// 
@@ -263,6 +268,15 @@ void MainForm::InitializeComponent(void)
 	this->button6->Text = L"Назад";
 	this->button6->UseVisualStyleBackColor = true;
 	this->button6->Click += gcnew System::EventHandler(this, &MainForm::button6_Click);
+	// 
+	// webBrowser1
+	// 
+	this->webBrowser1->Dock = System::Windows::Forms::DockStyle::Fill;
+	this->webBrowser1->Location = System::Drawing::Point(0, 0);
+	this->webBrowser1->MinimumSize = System::Drawing::Size(20, 20);
+	this->webBrowser1->Name = L"webBrowser1";
+	this->webBrowser1->Size = System::Drawing::Size(646, 602);
+	this->webBrowser1->TabIndex = 0;
 	// 
 	// MainForm
 	// 
@@ -281,6 +295,7 @@ void MainForm::InitializeComponent(void)
 	(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->splitContainer1))->EndInit();
 	this->splitContainer1->ResumeLayout(false);
 	this->splitContainer2->Panel1->ResumeLayout(false);
+	this->splitContainer2->Panel2->ResumeLayout(false);
 	(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->splitContainer2))->EndInit();
 	this->splitContainer2->ResumeLayout(false);
 	this->tabControl1->ResumeLayout(false);
@@ -324,8 +339,8 @@ Void MainForm::button5_Click(Object^ sender, EventArgs^ e)
 Void MainForm::button6_Click(Object^ sender, EventArgs^ e) {
 	this->tabControl1->SelectedIndex = 0;
 }
-Void MainForm::listBox1_Click(Object^ sender, EventArgs^ e) {
-	//this->webBrowser1->Url = gcnew Uri("http://mgke.minsk.edu.by/ru/main.aspx?guid=3791");
+Void MainForm::listBox1_SelectedIndexChanged(Object^ sender, EventArgs^ e) {
+	this->webBrowser1->DocumentText = "<!DOCTYPE html><html><body><dev><h1>Заголовок 1</h1><h2>Заголовок 2</h2><h3>Заголовок 3</h3></dev><body></html>";
 }
 
 void MainForm::DataLoadedHandler() {
@@ -339,26 +354,8 @@ void MainForm::DataLoadedHandler() {
 
 	MessageBox::Show("Загрузка завершена!");
 }
-void MainForm::CreateWebBrowser(Object^ sender, EventArgs^ e) {
-	webBrowserThread = gcnew Thread(gcnew ThreadStart(this, &MainForm::SelectWebBrowser));
-	this->Invoke(gcnew Action(this, &MainForm::AddWebBrowserInControls));
-	webBrowserThread->SetApartmentState(ApartmentState::STA);
-	webBrowserThread->Start();
-}
-void MainForm::SelectWebBrowser() {
-	this->webBrowser1 = (gcnew System::Windows::Forms::WebBrowser());
-	this->webBrowser1->Dock = System::Windows::Forms::DockStyle::Fill;
-	this->webBrowser1->Location = System::Drawing::Point(0, 0);
-	this->webBrowser1->MinimumSize = System::Drawing::Size(20, 20);
-	this->webBrowser1->Name = L"webBrowser1";
-	this->webBrowser1->Size = System::Drawing::Size(646, 602);
-	this->webBrowser1->TabIndex = 0;
-}
-void MainForm::AddWebBrowserInControls() {
-	this->splitContainer2->Panel2->Controls->Add(this->webBrowser1);
-}
 
-//[STAThread]
+[STAThread]
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
 	Application::EnableVisualStyles();
