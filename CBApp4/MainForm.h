@@ -8,6 +8,7 @@ namespace CBApp4 {
 	using namespace System::Threading::Tasks;
 	using namespace System::ComponentModel;
 	using namespace System::Collections;
+	using namespace System::Collections::Generic;
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
 	using namespace System::Drawing;	
@@ -17,12 +18,14 @@ namespace CBApp4 {
 	public ref class MainForm : public System::Windows::Forms::Form
 	{
 	public:
-		DataController^ data;
 		MainForm(void);
 
 	protected:
 		~MainForm();
 	private:
+		DataController^ data;
+		List<Entity^>^ selectedEntities;
+
 		System::Windows::Forms::SplitContainer^ splitContainer1;
 		System::Windows::Forms::SplitContainer^ splitContainer2;
 		System::Windows::Forms::Button^ button1;
@@ -59,6 +62,8 @@ namespace CBApp4 {
 		Void listBox1_SelectedIndexChanged(Object^ sender, EventArgs^ e);
 
 		void DataLoadedHandler();
+		String^ CreatePageText(Entity^ entity);
+		String^ CreateDayText(ParserApp::Models::Day^ day);
 		
 	};
 }

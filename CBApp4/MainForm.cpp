@@ -97,7 +97,6 @@ void MainForm::InitializeComponent(void)
 	// comboBox1
 	// 
 	this->comboBox1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Left | System::Windows::Forms::AnchorStyles::Right));
-	this->comboBox1->DropDownStyle = System::Windows::Forms::ComboBoxStyle::DropDownList;
 	this->comboBox1->FormattingEnabled = true;
 	this->comboBox1->Location = System::Drawing::Point(153, 3);
 	this->comboBox1->Name = L"comboBox1";
@@ -174,7 +173,7 @@ void MainForm::InitializeComponent(void)
 	this->panel1->Controls->Add(this->button2);
 	this->panel1->Location = System::Drawing::Point(6, 6);
 	this->panel1->Name = L"panel1";
-	this->panel1->Size = System::Drawing::Size(280, 591);
+	this->panel1->Size = System::Drawing::Size(280, 639);
 	this->panel1->TabIndex = 4;
 	// 
 	// button4
@@ -315,7 +314,8 @@ Void MainForm::button1_Click(Object^ sender, EventArgs^ e)
 Void MainForm::button2_Click(Object^ sender, EventArgs^ e)
 {
 	if (this->data->Loading->IsCompleted) {
-		this->listBox1->DataSource = this->data->Groups->Entities;
+		this->selectedEntities = this->data->Groups->Entities;
+		this->listBox1->DataSource = this->selectedEntities;
 		this->label1->Text = this->data->Groups->Name;
 		this->tabControl1->SelectedIndex = 1;
 	}
@@ -323,7 +323,8 @@ Void MainForm::button2_Click(Object^ sender, EventArgs^ e)
 Void MainForm::button3_Click(Object^ sender, EventArgs^ e)
 {
 	if (this->data->Loading->IsCompleted) {
-		this->listBox1->DataSource = this->data->Teachers->Entities;
+		this->selectedEntities = this->data->Teachers->Entities;
+		this->listBox1->DataSource = this->selectedEntities;
 		this->label1->Text = this->data->Teachers->Name;
 		this->tabControl1->SelectedIndex = 1;
 	}
@@ -340,7 +341,8 @@ Void MainForm::button6_Click(Object^ sender, EventArgs^ e) {
 	this->tabControl1->SelectedIndex = 0;
 }
 Void MainForm::listBox1_SelectedIndexChanged(Object^ sender, EventArgs^ e) {
-	this->webBrowser1->DocumentText = "<!DOCTYPE html><html><body><dev><h1>Заголовок 1</h1><h2>Заголовок 2</h2><h3>Заголовок 3</h3></dev><body></html>";
+	ListBox^ listBox = (ListBox^)sender;
+	this->webBrowser1->DocumentText = CreatePageText(this->selectedEntities[listBox->SelectedIndex]);
 }
 
 void MainForm::DataLoadedHandler() {
@@ -350,9 +352,36 @@ void MainForm::DataLoadedHandler() {
 
 	this->comboBox1->DataSource = entities;
 
-	//this->comboBox1->DataSource = entities;
-
 	MessageBox::Show("Загрузка завершена!");
+}
+String^ MainForm::CreatePageText(Entity^ entity) {
+	String^ pageText = "";
+
+	pageText += "<!DOCTYPE html><html><body><div>";
+
+	pageText += "<h1>" + entity->Name + "</h1>";
+	pageText += "<h2>" + entity->Date + "</h2>";
+
+	for each (ParserApp::Models::Day^ d in entity->Days) {
+		pageText += CreateDayText(d);
+	}
+
+	pageText += "</div></body></html>";
+
+	return pageText;
+}
+String^ MainForm::CreateDayText(ParserApp::Models::Day^ day) {
+	String^ dayText = "";
+
+	dayText += "<h3>" + day->Date + "</h3><div>";
+	
+	for each (array<String^> ^ l in day->Lessons) {
+		dayText += "<p>" + l[0] + " " + l[1];
+	}
+	
+	dayText += "</div><br>";
+
+	return dayText;
 }
 
 [STAThread]
