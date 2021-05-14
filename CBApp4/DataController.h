@@ -23,12 +23,29 @@ namespace CBApp4
         Task^ _loading;
 
         void LoadingData() {
-            Task<String^>^ taskGroupsLoading = this->httpClient->GetStringAsync(this->groupsAddress);
-            Task<String^>^ taskTeachersLoading = this->httpClient->GetStringAsync(this->teachersAddress);
-            this->_groups = Parser::ParsePage(taskGroupsLoading, true);
-            this->_teachers = Parser::ParsePage(taskTeachersLoading, false);
+            try
+            {
+                this->httpClient->
 
-            this->OnDataLoaded();
+                Task<String^>^ taskGroupsLoading = this->httpClient->GetStringAsync(this->groupsAddress);
+                Task<String^>^ taskTeachersLoading = this->httpClient->GetStringAsync(this->teachersAddress);
+                this->_groups = Parser::ParsePage(taskGroupsLoading, true);
+                this->_teachers = Parser::ParsePage(taskTeachersLoading, false);
+
+                this->OnDataLoaded();
+            }
+            catch (HttpRequestException^ ex)
+            {
+                throw ex;
+            }
+            catch (WebException^ ex)
+            {
+                throw ex;
+            }
+            catch (Exception^ ex)
+            {
+                throw ex;
+            }
         }
         Void groups_DownloadStringCompleted(Object^ sender, DownloadStringCompletedEventArgs^ e)
         {
@@ -70,7 +87,9 @@ namespace CBApp4
 
         void StartLoading() {
             this->_loading = Task::Run(gcnew Action(this, &DataController::LoadingData));
+            this->_loading->Ex
         }
+
         Void Old_StartLoading()
         {
             WebClient^ client1 = gcnew WebClient;

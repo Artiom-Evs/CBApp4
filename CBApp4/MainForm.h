@@ -5,6 +5,7 @@ namespace CBApp4 {
 
 	using namespace System;
 	using namespace System::Net;
+	using namespace System::Threading;
 	using namespace System::Threading::Tasks;
 	using namespace System::ComponentModel;
 	using namespace System::Collections;
@@ -19,6 +20,7 @@ namespace CBApp4 {
 	{
 	public:
 		MainForm(void);
+		static void ExceptionsHandler(Object^ sender, ThreadExceptionEventArgs^ e);
 
 	protected:
 		~MainForm();
@@ -60,7 +62,9 @@ namespace CBApp4 {
 		Void button5_Click(Object^ sender, EventArgs^ e);
 		Void button6_Click(Object^ sender, EventArgs^ e);
 		Void listBox1_SelectedIndexChanged(Object^ sender, EventArgs^ e);
-
+		Void comboBox1_SelectedIndexChanged(Object^ sender, EventArgs^ e);
+		
+		void OnFormCreated(Object^ sender, EventArgs^ e);
 		void DataLoadedHandler();
 		String^ CreatePageText(Entity^ entity);
 		String^ CreateDayText(ParserApp::Models::Day^ day);

@@ -14,6 +14,7 @@ using namespace ParserApp::Models;
 MainForm::MainForm(void)
 {
 	InitializeComponent();
+	this->HandleCreated += gcnew EventHandler(this, &MainForm::OnFormCreated);
 	this->data = gcnew DataController();
 	this->data->DataLoadingCompleted += gcnew DataLoadingEventHandler(this, &MainForm::DataLoadedHandler);
 	this->data->StartLoading();
@@ -25,6 +26,7 @@ MainForm::~MainForm()
 		delete components;
 	}
 }
+
 void MainForm::InitializeComponent(void)
 {
 	this->splitContainer1 = (gcnew System::Windows::Forms::SplitContainer());
@@ -62,6 +64,8 @@ void MainForm::InitializeComponent(void)
 	// splitContainer1
 	// 
 	this->splitContainer1->Dock = System::Windows::Forms::DockStyle::Fill;
+	this->splitContainer1->FixedPanel = System::Windows::Forms::FixedPanel::Panel1;
+	this->splitContainer1->IsSplitterFixed = true;
 	this->splitContainer1->Location = System::Drawing::Point(0, 0);
 	this->splitContainer1->Margin = System::Windows::Forms::Padding(4);
 	this->splitContainer1->Name = L"splitContainer1";
@@ -97,11 +101,13 @@ void MainForm::InitializeComponent(void)
 	// comboBox1
 	// 
 	this->comboBox1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Left | System::Windows::Forms::AnchorStyles::Right));
+	this->comboBox1->DropDownStyle = System::Windows::Forms::ComboBoxStyle::DropDownList;
 	this->comboBox1->FormattingEnabled = true;
 	this->comboBox1->Location = System::Drawing::Point(153, 3);
 	this->comboBox1->Name = L"comboBox1";
 	this->comboBox1->Size = System::Drawing::Size(600, 40);
 	this->comboBox1->TabIndex = 1;
+	this->comboBox1->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::comboBox1_SelectedIndexChanged);
 	// 
 	// button1
 	// 
@@ -123,6 +129,7 @@ void MainForm::InitializeComponent(void)
 	// 
 	this->splitContainer2->Dock = System::Windows::Forms::DockStyle::Fill;
 	this->splitContainer2->FixedPanel = System::Windows::Forms::FixedPanel::Panel1;
+	this->splitContainer2->IsSplitterFixed = true;
 	this->splitContainer2->Location = System::Drawing::Point(0, 0);
 	this->splitContainer2->Margin = System::Windows::Forms::Padding(4);
 	this->splitContainer2->Name = L"splitContainer2";
@@ -135,7 +142,7 @@ void MainForm::InitializeComponent(void)
 	// 
 	this->splitContainer2->Panel2->Controls->Add(this->webBrowser1);
 	this->splitContainer2->Size = System::Drawing::Size(952, 602);
-	this->splitContainer2->SplitterDistance = 300;
+	this->splitContainer2->SplitterDistance = 320;
 	this->splitContainer2->SplitterWidth = 6;
 	this->splitContainer2->TabIndex = 0;
 	// 
@@ -144,12 +151,11 @@ void MainForm::InitializeComponent(void)
 	this->tabControl1->Controls->Add(this->tabPage1);
 	this->tabControl1->Controls->Add(this->tabPage2);
 	this->tabControl1->Dock = System::Windows::Forms::DockStyle::Fill;
-	this->tabControl1->ImeMode = System::Windows::Forms::ImeMode::AlphaFull;
 	this->tabControl1->Location = System::Drawing::Point(0, 0);
 	this->tabControl1->Multiline = true;
 	this->tabControl1->Name = L"tabControl1";
 	this->tabControl1->SelectedIndex = 0;
-	this->tabControl1->Size = System::Drawing::Size(300, 602);
+	this->tabControl1->Size = System::Drawing::Size(320, 602);
 	this->tabControl1->TabIndex = 5;
 	// 
 	// tabPage1
@@ -158,7 +164,7 @@ void MainForm::InitializeComponent(void)
 	this->tabPage1->Location = System::Drawing::Point(4, 41);
 	this->tabPage1->Name = L"tabPage1";
 	this->tabPage1->Padding = System::Windows::Forms::Padding(3);
-	this->tabPage1->Size = System::Drawing::Size(292, 557);
+	this->tabPage1->Size = System::Drawing::Size(312, 557);
 	this->tabPage1->TabIndex = 0;
 	this->tabPage1->Text = L"tabPage1";
 	this->tabPage1->UseVisualStyleBackColor = true;
@@ -173,7 +179,7 @@ void MainForm::InitializeComponent(void)
 	this->panel1->Controls->Add(this->button2);
 	this->panel1->Location = System::Drawing::Point(6, 6);
 	this->panel1->Name = L"panel1";
-	this->panel1->Size = System::Drawing::Size(280, 639);
+	this->panel1->Size = System::Drawing::Size(300, 675);
 	this->panel1->TabIndex = 4;
 	// 
 	// button4
@@ -182,7 +188,7 @@ void MainForm::InitializeComponent(void)
 		| System::Windows::Forms::AnchorStyles::Right));
 	this->button4->Location = System::Drawing::Point(3, 95);
 	this->button4->Name = L"button4";
-	this->button4->Size = System::Drawing::Size(274, 40);
+	this->button4->Size = System::Drawing::Size(294, 40);
 	this->button4->TabIndex = 3;
 	this->button4->Text = L"Выход";
 	this->button4->UseVisualStyleBackColor = true;
@@ -194,7 +200,7 @@ void MainForm::InitializeComponent(void)
 		| System::Windows::Forms::AnchorStyles::Right));
 	this->button3->Location = System::Drawing::Point(3, 49);
 	this->button3->Name = L"button3";
-	this->button3->Size = System::Drawing::Size(274, 40);
+	this->button3->Size = System::Drawing::Size(294, 40);
 	this->button3->TabIndex = 2;
 	this->button3->Text = L"Расписание преподавателей";
 	this->button3->UseVisualStyleBackColor = true;
@@ -206,7 +212,7 @@ void MainForm::InitializeComponent(void)
 		| System::Windows::Forms::AnchorStyles::Right));
 	this->button2->Location = System::Drawing::Point(3, 3);
 	this->button2->Name = L"button2";
-	this->button2->Size = System::Drawing::Size(274, 40);
+	this->button2->Size = System::Drawing::Size(294, 40);
 	this->button2->TabIndex = 1;
 	this->button2->Text = L"Расписание групп";
 	this->button2->UseVisualStyleBackColor = true;
@@ -218,7 +224,7 @@ void MainForm::InitializeComponent(void)
 	this->tabPage2->Location = System::Drawing::Point(4, 41);
 	this->tabPage2->Name = L"tabPage2";
 	this->tabPage2->Padding = System::Windows::Forms::Padding(3);
-	this->tabPage2->Size = System::Drawing::Size(292, 557);
+	this->tabPage2->Size = System::Drawing::Size(312, 557);
 	this->tabPage2->TabIndex = 1;
 	this->tabPage2->Text = L"tabPage2";
 	this->tabPage2->UseVisualStyleBackColor = true;
@@ -233,7 +239,7 @@ void MainForm::InitializeComponent(void)
 	this->panel2->Controls->Add(this->button6);
 	this->panel2->Location = System::Drawing::Point(6, 6);
 	this->panel2->Name = L"panel2";
-	this->panel2->Size = System::Drawing::Size(280, 546);
+	this->panel2->Size = System::Drawing::Size(300, 546);
 	this->panel2->TabIndex = 5;
 	// 
 	// label1
@@ -250,7 +256,7 @@ void MainForm::InitializeComponent(void)
 	this->listBox1->Anchor = System::Windows::Forms::AnchorStyles::None;
 	this->listBox1->FormattingEnabled = true;
 	this->listBox1->ItemHeight = 32;
-	this->listBox1->Location = System::Drawing::Point(3, 90);
+	this->listBox1->Location = System::Drawing::Point(13, 90);
 	this->listBox1->Name = L"listBox1";
 	this->listBox1->Size = System::Drawing::Size(274, 452);
 	this->listBox1->TabIndex = 2;
@@ -262,7 +268,7 @@ void MainForm::InitializeComponent(void)
 		| System::Windows::Forms::AnchorStyles::Right));
 	this->button6->Location = System::Drawing::Point(3, 3);
 	this->button6->Name = L"button6";
-	this->button6->Size = System::Drawing::Size(274, 40);
+	this->button6->Size = System::Drawing::Size(294, 40);
 	this->button6->TabIndex = 0;
 	this->button6->Text = L"Назад";
 	this->button6->UseVisualStyleBackColor = true;
@@ -274,7 +280,7 @@ void MainForm::InitializeComponent(void)
 	this->webBrowser1->Location = System::Drawing::Point(0, 0);
 	this->webBrowser1->MinimumSize = System::Drawing::Size(20, 20);
 	this->webBrowser1->Name = L"webBrowser1";
-	this->webBrowser1->Size = System::Drawing::Size(646, 602);
+	this->webBrowser1->Size = System::Drawing::Size(626, 602);
 	this->webBrowser1->TabIndex = 0;
 	// 
 	// MainForm
@@ -304,7 +310,35 @@ void MainForm::InitializeComponent(void)
 	this->panel2->ResumeLayout(false);
 	this->panel2->PerformLayout();
 	this->ResumeLayout(false);
+}
+String^ MainForm::CreatePageText(Entity^ entity) {
+	String^ pageText = "";
 
+	pageText += "<!DOCTYPE html><html><body><div>";
+
+	pageText += "<h1>" + entity->Name + "</h1>";
+	pageText += "<h2>" + entity->Date + "</h2>";
+
+	for each (ParserApp::Models::Day ^ d in entity->Days) {
+		pageText += CreateDayText(d);
+	}
+
+	pageText += "</div></body></html>";
+
+	return pageText;
+}
+String^ MainForm::CreateDayText(ParserApp::Models::Day^ day) {
+	String^ dayText = "";
+
+	dayText += "<h3>" + day->Date + "</h3><div>";
+
+	for each (array<String^> ^ l in day->Lessons) {
+		dayText += "<p>" + l[0] + " " + l[1];
+	}
+
+	dayText += "</div><br>";
+
+	return dayText;
 }
 
 Void MainForm::button1_Click(Object^ sender, EventArgs^ e)
@@ -344,7 +378,14 @@ Void MainForm::listBox1_SelectedIndexChanged(Object^ sender, EventArgs^ e) {
 	ListBox^ listBox = (ListBox^)sender;
 	this->webBrowser1->DocumentText = CreatePageText(this->selectedEntities[listBox->SelectedIndex]);
 }
+Void MainForm::comboBox1_SelectedIndexChanged(Object^ sender, EventArgs^ e) {
+	ComboBox^ listBox = (ComboBox^)sender;
+	this->webBrowser1->DocumentText = CreatePageText(((Entity^)listBox->SelectedItem));
+}
 
+void MainForm::OnFormCreated(Object^ sender, EventArgs^ e) {
+	this->data->StartLoading();
+}
 void MainForm::DataLoadedHandler() {
 	List<Entity^>^ entities = gcnew List<Entity^>();
 	entities->AddRange(this->data->Groups->Entities);
@@ -354,41 +395,17 @@ void MainForm::DataLoadedHandler() {
 
 	MessageBox::Show("Загрузка завершена!");
 }
-String^ MainForm::CreatePageText(Entity^ entity) {
-	String^ pageText = "";
-
-	pageText += "<!DOCTYPE html><html><body><div>";
-
-	pageText += "<h1>" + entity->Name + "</h1>";
-	pageText += "<h2>" + entity->Date + "</h2>";
-
-	for each (ParserApp::Models::Day^ d in entity->Days) {
-		pageText += CreateDayText(d);
-	}
-
-	pageText += "</div></body></html>";
-
-	return pageText;
-}
-String^ MainForm::CreateDayText(ParserApp::Models::Day^ day) {
-	String^ dayText = "";
-
-	dayText += "<h3>" + day->Date + "</h3><div>";
-	
-	for each (array<String^> ^ l in day->Lessons) {
-		dayText += "<p>" + l[0] + " " + l[1];
-	}
-	
-	dayText += "</div><br>";
-
-	return dayText;
+void MainForm::ExceptionsHandler(Object^ sender, ThreadExceptionEventArgs^ e) {
+	MessageBox::Show("Исключение: " + e->Exception->Message);
 }
 
 [STAThread]
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
+	Application::ThreadException += gcnew ThreadExceptionEventHandler(MainForm::ExceptionsHandler);
 	Application::EnableVisualStyles();
 	Application::SetCompatibleTextRenderingDefault(false);
 	Application::Run(gcnew MainForm);
+
 	return 0;
 }
