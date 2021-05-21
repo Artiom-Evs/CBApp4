@@ -8,16 +8,16 @@ using namespace System::Net::Http;
 using namespace System::Collections::Generic;
 using namespace System::Threading;
 using namespace System::Threading::Tasks;
+using namespace System::Windows::Forms;
 using namespace CBApp4;
 using namespace ParserApp::Models;
 
 MainForm::MainForm(void)
 {
 	InitializeComponent();
-	this->HandleCreated += gcnew EventHandler(this, &MainForm::OnFormCreated);
 	this->data = gcnew DataController();
-	this->data->DataLoadingCompleted += gcnew DataLoadingEventHandler(this, &MainForm::DataLoadedHandler);
-	this->data->StartLoading();
+	this->data->DataLoadingCompleted += gcnew DataLoadingEventHandler(this, &MainForm::DataController_DataLoaded);
+	this->Shown += gcnew EventHandler(this, &MainForm::MainForm_Shown);
 }
 MainForm::~MainForm()
 {
@@ -383,10 +383,7 @@ Void MainForm::comboBox1_SelectedIndexChanged(Object^ sender, EventArgs^ e) {
 	this->webBrowser1->DocumentText = CreatePageText(((Entity^)listBox->SelectedItem));
 }
 
-void MainForm::OnFormCreated(Object^ sender, EventArgs^ e) {
-	this->data->StartLoading();
-}
-void MainForm::DataLoadedHandler() {
+void MainForm::DataController_DataLoaded() {
 	List<Entity^>^ entities = gcnew List<Entity^>();
 	entities->AddRange(this->data->Groups->Entities);
 	entities->AddRange(this->data->Teachers->Entities);
@@ -395,14 +392,23 @@ void MainForm::DataLoadedHandler() {
 
 	MessageBox::Show("Загрузка завершена!");
 }
-void MainForm::ExceptionsHandler(Object^ sender, ThreadExceptionEventArgs^ e) {
-	MessageBox::Show("Исключение: " + e->Exception->Message);
+void MainForm::MainForm_Shown(Object^ sender, EventArgs^ e) {
+	this->data->StartLoading();
+}
+void MainForm::MainForm_ExceptionOccurred(Object^ sender, ThreadExceptionEventArgs^ e) {
+	//MessageBox::Show(e->Exception->ToString());
+	
+	if (e->Exception->Data->Count > 0) {
+		for each (DictionaryEntry de in e->Exception->Data) {
+			MessageBox::Show(de.Value->ToString());
+		}
+	}
 }
 
 [STAThread]
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
-	Application::ThreadException += gcnew ThreadExceptionEventHandler(MainForm::ExceptionsHandler);
+	Application::ThreadException += gcnew ThreadExceptionEventHandler(MainForm::MainForm_ExceptionOccurred);
 	Application::EnableVisualStyles();
 	Application::SetCompatibleTextRenderingDefault(false);
 	Application::Run(gcnew MainForm);

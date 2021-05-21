@@ -20,10 +20,11 @@ namespace CBApp4 {
 	{
 	public:
 		MainForm(void);
-		static void ExceptionsHandler(Object^ sender, ThreadExceptionEventArgs^ e);
+		static void MainForm_ExceptionOccurred(Object^ sender, ThreadExceptionEventArgs^ e);
 
 	protected:
 		~MainForm();
+
 	private:
 		DataController^ data;
 		List<Entity^>^ selectedEntities;
@@ -64,10 +65,10 @@ namespace CBApp4 {
 		Void listBox1_SelectedIndexChanged(Object^ sender, EventArgs^ e);
 		Void comboBox1_SelectedIndexChanged(Object^ sender, EventArgs^ e);
 		
-		void OnFormCreated(Object^ sender, EventArgs^ e);
-		void DataLoadedHandler();
+		void MainForm_Shown(Object^ sender, EventArgs^ e);
+		void DataController_DataLoaded();
+		
 		String^ CreatePageText(Entity^ entity);
 		String^ CreateDayText(ParserApp::Models::Day^ day);
-		
 	};
 }

@@ -19,43 +19,41 @@ namespace CBApp4
         EntitiesList^ _groups;
         EntitiesList^ _teachers;
         HttpClient^ httpClient;
-
         Task^ _loading;
 
         void LoadingData() {
-            try
-            {
-                this->httpClient->
-
+            try {
                 Task<String^>^ taskGroupsLoading = this->httpClient->GetStringAsync(this->groupsAddress);
                 Task<String^>^ taskTeachersLoading = this->httpClient->GetStringAsync(this->teachersAddress);
                 this->_groups = Parser::ParsePage(taskGroupsLoading, true);
                 this->_teachers = Parser::ParsePage(taskTeachersLoading, false);
-
                 this->OnDataLoaded();
             }
-            catch (HttpRequestException^ ex)
-            {
-                throw ex;
-            }
-            catch (WebException^ ex)
-            {
-                throw ex;
-            }
-            catch (Exception^ ex)
-            {
-                throw ex;
-            }
-        }
-        Void groups_DownloadStringCompleted(Object^ sender, DownloadStringCompletedEventArgs^ e)
-        {
-            this->_groups = ParserApp::Services::Parser::ParsePage(e->Result, true);
-        }
-        Void teachers_DownloadStringCompleted(Object^ sender, DownloadStringCompletedEventArgs^ e)
-        {
-            this->_teachers = ParserApp::Services::Parser::ParsePage(e->Result, true);
-        }
+            catch (HttpRequestException^ ex) {
+                ex->Data["innerText"] = ex->GetType() + ": Вы не подключены к сети!";
+                ex->InnerException->Data["innerText"] = ex->InnerException->GetType() + ": Вы не подключены к сети!";
+                ex->InnerException->InnerException->Data["innerText"] = ex->InnerException->InnerException->GetType() + ": Вы не подключены к сети!";
 
+                throw ex;
+            }
+            catch (WebException^ ex) {
+                ex->Data["innerText"] = ex->GetType() + ": Вы не подключены к сети!";
+                ex->InnerException->Data["innerText"] = ex->InnerException->GetType() + ": Вы не подключены к сети!";
+                ex->InnerException->InnerException->Data["innerText"] = ex->InnerException->InnerException->GetType() + ": Вы не подключены к сети!";
+
+                throw ex;
+            }
+            catch (AggregateException^ ex) {
+                ex->Data["innerText"] = ex->GetType() + ": Вы не подключены к сети!";
+                ex->InnerException->Data["innerText"] = ex->InnerException->GetType() + ": Вы не подключены к сети!";
+                ex->InnerException->InnerException->Data["innerText"] = ex->InnerException->InnerException->GetType() + ": Вы не подключены к сети!";
+
+                throw ex;
+            }
+            catch (Exception^ ex) {
+                throw ex;
+            }
+        }
         void OnDataLoaded() {
             this->DataLoadingCompleted();
         }
@@ -86,18 +84,10 @@ namespace CBApp4
         }
 
         void StartLoading() {
-            this->_loading = Task::Run(gcnew Action(this, &DataController::LoadingData));
-            this->_loading->Ex
+            this->LoadingData();
         }
-
-        Void Old_StartLoading()
-        {
-            WebClient^ client1 = gcnew WebClient;
-            WebClient^ client2 = gcnew WebClient;
-            client1->DownloadStringCompleted += gcnew DownloadStringCompletedEventHandler(this, &DataController::groups_DownloadStringCompleted);
-            client2->DownloadStringCompleted += gcnew DownloadStringCompletedEventHandler(this, &DataController::teachers_DownloadStringCompleted);
-            client1->DownloadStringAsync(gcnew Uri(this->groupsAddress));
-            client2->DownloadStringAsync(gcnew Uri(this->teachersAddress));
+        void StartLoadingAsync() {
+            this->_loading = Task::Run(gcnew Action(this, &DataController::LoadingData));
         }
 
         event DataLoadingEventHandler^ DataLoadingCompleted;
