@@ -347,7 +347,7 @@ Void MainForm::button1_Click(Object^ sender, EventArgs^ e)
 }
 Void MainForm::button2_Click(Object^ sender, EventArgs^ e)
 {
-	if (this->data->Loading->IsCompleted) {
+	if (this->data->IsLoaded) {
 		this->selectedEntities = this->data->Groups->Entities;
 		this->listBox1->DataSource = this->selectedEntities;
 		this->label1->Text = this->data->Groups->Name;
@@ -356,7 +356,7 @@ Void MainForm::button2_Click(Object^ sender, EventArgs^ e)
 }
 Void MainForm::button3_Click(Object^ sender, EventArgs^ e)
 {
-	if (this->data->Loading->IsCompleted) {
+	if (this->data->IsLoaded) {
 		this->selectedEntities = this->data->Teachers->Entities;
 		this->listBox1->DataSource = this->selectedEntities;
 		this->label1->Text = this->data->Teachers->Name;

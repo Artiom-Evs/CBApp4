@@ -20,6 +20,7 @@ namespace CBApp4
         EntitiesList^ _teachers;
         HttpClient^ httpClient;
         Task^ _loading;
+        bool _isLoaded;
 
         void LoadingData() {
             try {
@@ -55,6 +56,7 @@ namespace CBApp4
             }
         }
         void OnDataLoaded() {
+            this->_isLoaded = true;
             this->DataLoadingCompleted();
         }
 
@@ -62,11 +64,19 @@ namespace CBApp4
         DataController() {
             this->groupsAddress = gcnew String("http://mgke.minsk.edu.by/ru/main.aspx?guid=3791");
             this->teachersAddress = gcnew String("http://mgke.minsk.edu.by/ru/main.aspx?guid=3811");
+            this->_isLoaded = false;
 
             System::Net::ServicePointManager::DefaultConnectionLimit = 4;
             this->httpClient = gcnew HttpClient();
         }
 
+        event DataLoadingEventHandler^ DataLoadingCompleted;
+
+        property bool IsLoaded {
+            bool get() {
+                return this->_isLoaded;
+            }
+        }
         property EntitiesList^ Groups {
             EntitiesList^ get() {
                 return this->_groups;
@@ -82,15 +92,15 @@ namespace CBApp4
                 return this->_loading;
             }
         }
-
+        
         void StartLoading() {
+            this->_isLoaded = false;
             this->LoadingData();
         }
         void StartLoadingAsync() {
+            this->_isLoaded = false;
             this->_loading = Task::Run(gcnew Action(this, &DataController::LoadingData));
         }
-
-        event DataLoadingEventHandler^ DataLoadingCompleted;
     };
 
 }
