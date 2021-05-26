@@ -27,26 +27,16 @@ namespace CBApp4 {
 
 	private:
 		DataController^ data;
-		List<Entity^>^ selectedEntities;
-
-		System::Windows::Forms::SplitContainer^ splitContainer1;
-		System::Windows::Forms::SplitContainer^ splitContainer2;
-		System::Windows::Forms::Button^ button1;
-		System::Windows::Forms::ComboBox^ comboBox1;
-		System::Windows::Forms::Button^ button5;
-
-		System::Windows::Forms::TabControl^ tabControl1;
-		System::Windows::Forms::TabPage^ tabPage1;
-		System::Windows::Forms::Panel^ panel1;
-		System::Windows::Forms::Button^ button4;
-		System::Windows::Forms::Button^ button3;
-		System::Windows::Forms::Button^ button2;
-		System::Windows::Forms::TabPage^ tabPage2;
-		System::Windows::Forms::Panel^ panel2;
-		System::Windows::Forms::Label^ label1;
-		System::Windows::Forms::ListBox^ listBox1;
-		System::Windows::Forms::Button^ button6;
-		System::Windows::Forms::WebBrowser^ webBrowser1;
+	private: System::Windows::Forms::SplitContainer^ splitContainer1;
+	private: System::Windows::Forms::Panel^ panel1;
+	private: System::Windows::Forms::Button^ button2;
+	private: System::Windows::Forms::Button^ button1;
+	private: System::Windows::Forms::TabControl^ tabControl1;
+	private: System::Windows::Forms::TabPage^ tabPage1;
+	private: System::Windows::Forms::TabPage^ tabPage2;
+	private: System::Windows::Forms::ListBox^ listBox1;
+	private: System::Windows::Forms::ListBox^ listBox2;
+	private: System::Windows::Forms::WebBrowser^ webBrowser1;
 
 	private:
 		System::ComponentModel::Container^ components;
@@ -56,19 +46,13 @@ namespace CBApp4 {
 
 #pragma endregion
 	private:
-		Void button1_Click(Object^ sender, EventArgs^ e);
-		Void button2_Click(Object^ sender, EventArgs^ e);
-		Void button3_Click(Object^ sender, EventArgs^ e);
-		Void button4_Click(Object^ sender, EventArgs^ e);
-		Void button5_Click(Object^ sender, EventArgs^ e);
-		Void button6_Click(Object^ sender, EventArgs^ e);
-		Void listBox1_SelectedIndexChanged(Object^ sender, EventArgs^ e);
-		Void comboBox1_SelectedIndexChanged(Object^ sender, EventArgs^ e);
-		
-		void MainForm_Shown(Object^ sender, EventArgs^ e);
-		void DataController_DataLoaded();
-		
 		String^ CreatePageText(Entity^ entity);
 		String^ CreateDayText(ParserApp::Models::Day^ day);
+
+		void MainForm_Shown(Object^ sender, EventArgs^ e);
+		void DataController_DataLoaded();
+		System::Void button1_Click(System::Object^ sender, System::EventArgs^ e);
+		System::Void button2_Click(System::Object^ sender, System::EventArgs^ e);
+		System::Void listBox_SelectedIndexChanged(System::Object^ sender, System::EventArgs^ e);
 	};
 }
