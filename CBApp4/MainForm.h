@@ -27,16 +27,37 @@ namespace CBApp4 {
 
 	private:
 		DataController^ data;
-	private: System::Windows::Forms::SplitContainer^ splitContainer1;
-	private: System::Windows::Forms::Panel^ panel1;
-	private: System::Windows::Forms::Button^ button2;
-	private: System::Windows::Forms::Button^ button1;
+	private: System::Windows::Forms::MenuStrip^ menuStrip1;
+	private: System::Windows::Forms::ToolStripMenuItem^ Ù‡ÈÎToolStripMenuItem;
+
+
+	private: System::Windows::Forms::ToolStripMenuItem^ toolStripMenuItem1;
+	private: System::Windows::Forms::ToolStripSeparator^ toolStripSeparator1;
+	private: System::Windows::Forms::ToolStripMenuItem^ toolStripMenuItem2;
 	private: System::Windows::Forms::TabControl^ tabControl1;
 	private: System::Windows::Forms::TabPage^ tabPage1;
 	private: System::Windows::Forms::TabPage^ tabPage2;
+	private: System::Windows::Forms::TabPage^ tabPage3;
+	private: System::Windows::Forms::SplitContainer^ splitContainer1;
 	private: System::Windows::Forms::ListBox^ listBox1;
+	private: System::Windows::Forms::SplitContainer^ splitContainer2;
 	private: System::Windows::Forms::ListBox^ listBox2;
 	private: System::Windows::Forms::WebBrowser^ webBrowser1;
+	private: System::Windows::Forms::WebBrowser^ webBrowser2;
+	private: System::Windows::Forms::ToolStripMenuItem^ ÒÔ‡‚Í‡ToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^ toolStripMenuItem3;
+	private: System::Windows::Forms::ToolStripSeparator^ toolStripSeparator2;
+	private: System::Windows::Forms::ToolStripMenuItem^ toolStripMenuItem4;
+
+
+
+
+
+
+
+
+
+
 
 	private:
 		System::ComponentModel::Container^ components;
@@ -51,8 +72,12 @@ namespace CBApp4 {
 
 		void MainForm_Shown(Object^ sender, EventArgs^ e);
 		void DataController_DataLoaded();
-		System::Void button1_Click(System::Object^ sender, System::EventArgs^ e);
-		System::Void button2_Click(System::Object^ sender, System::EventArgs^ e);
-		System::Void listBox_SelectedIndexChanged(System::Object^ sender, System::EventArgs^ e);
+		
+		Void toolStripMenuItem2_Click(System::Object^ sender, System::EventArgs^ e);
+		Void toolStripMenuItem1_Click(System::Object^ sender, System::EventArgs^ e);
+		Void listBox1_SelectedIndexChanged(System::Object^ sender, System::EventArgs^ e);
+		Void listBox2_SelectedIndexChanged(System::Object^ sender, System::EventArgs^ e);
+		Void toolStripMenuItem3_Click(System::Object^ sender, System::EventArgs^ e);
+		Void toolStripMenuItem4_Click(System::Object^ sender, System::EventArgs^ e);
 	};
 }
